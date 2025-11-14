@@ -3,53 +3,54 @@
 **Last Updated**: 2025-11-14 (22:17 UTC)  
 **Project Start**: 2025-11-14  
 **Target Completion**: 2025-11-24 (10 days, flexible)  
-**Status**: 🟢 Day 1A: Schemas Complete ✅ → Next: Models + FastAPI App
+**Status**: Day 1A: Schemas Complete -> Next: Models + FastAPI App
 
 ---
 
-## ⚠️ IMPORTANT: This is a Learning Project
+## IMPORTANT: This is a Learning Project
 
 **How Claude Should Interact:**
 
 This project is designed as a **learning vehicle**, not just to ship code. Claude's role is to:
 
-1. ✅ **Explain the "why" behind every decision**
+1. **Explain the "why" behind every decision**
    - Don't just write code; explain architectural choices
    - Show trade-offs between options
    - Help understand best practices
 
-2. ✅ **Guide, don't implement**
+2. **Guide, don't implement**
    - Ask guiding questions before writing code
    - Encourage thinking about design before coding
    - Point out conventions and patterns, let you discover them
 
-3. ✅ **Encourage TDD discipline (Pure Red-Green-Refactor)**
+3. **Encourage TDD discipline (Pure Red-Green-Refactor)**
    - Write failing test first (RED)
    - Write minimal code to pass (GREEN)
    - Refactor while keeping tests green (REFACTOR)
    - This is strict TDD for learning best practices
 
-4. ✅ **Document decisions in CLAUDE.md**
+4. **Document decisions in CLAUDE.md**
    - Update this file regularly with decisions and reasoning
    - Capture "why" we chose something
    - Help with context switching between sessions
 
-5. ✅ **Provide just-in-time learning**
+5. **Provide just-in-time learning**
    - Teach async/await when we need it
    - Explain type hints as they appear
    - Don't overwhelm with unused information
 
 **What Claude should NOT do:**
-- ❌ Write complete files without explanation
-- ❌ Skip the reasoning behind decisions
-- ❌ Assume prior knowledge (ask first)
-- ❌ Add features not explicitly requested
-- ❌ Create files without user understanding why
+- Write complete files without explanation
+- Skip the reasoning behind decisions
+- Assume prior knowledge (ask first)
+- Add features not explicitly requested
+- Create files without user understanding why
+- **Use emojis in documentation** (looks AI-generated, unprofessional)
 
 **Teaching Style (Decided)**:
-- ✅ **First encounter**: Explain thoroughly (compare to C#/TypeScript where relevant)
-- ✅ **Subsequent uses**: Trust understanding, only highlight differences
-- ✅ **Example**: First `@app.post()` decorator → full explanation. Second one → assume you got it
+- **First encounter**: Explain thoroughly (compare to C#/TypeScript where relevant)
+- **Subsequent uses**: Trust understanding, only highlight differences
+- **Example**: First `@app.post()` decorator -> full explanation. Second one -> assume you got it
 
 ---
 
@@ -677,7 +678,7 @@ pip install flask sqlalchemy python-dotenv openai langchain langgraph pydantic p
 - Reasoning: Follow Google Python Style Guide, prepare for interviews
 
 **6. Testing Strategy**
-- ✅ DECISION: Pure TDD (Red-Green-Refactor cycle)
+- DECISION: Pure TDD (Red-Green-Refactor cycle)
 - Write test first → See it fail (RED) → Implement minimal code → See it pass (GREEN) → Refactor (REFACTOR)
 - Reasoning: Learn TDD discipline from ground-up, industry best practice, safer refactoring
 - Benefits: Think about interface first, prevent over-engineering, confidence in code
@@ -755,5 +756,33 @@ curl -X POST http://localhost:8081/api/triage -d '{"title":"test","description":
 
 ---
 
-**Status**: 🟡 In Planning  
-**Next Update**: After Day 1 completion
+**7. Git Workflow**
+- DECISION: Feature branch workflow with PRs
+- Branches: `main` (production), `develop` (integration), `feature/*` (work)
+- Commit frequently after each passing test or complete feature
+- Use meaningful commit messages (no "fix bug" or "update files")
+- CLAUDE.md stays in `develop` and feature branches only (not `main`)
+- README.md in all branches
+
+**Commit Message Format:**
+```bash
+# Good commits
+git commit -m "Add Pydantic schemas for issue input and triage decision"
+git commit -m "Add SQLAlchemy Triage model with tests"
+git commit -m "Add FastAPI health check endpoint"
+
+# Bad commits (avoid)
+git commit -m "Update files"
+git commit -m "Day 1 work"
+```
+
+**8. Documentation Preferences**
+- NO emojis in README.md or any documentation (looks AI-generated)
+- Use clean Markdown with proper headings
+- Checkboxes for status: `- [x] Done` not "checkmark emoji Done"
+- Professional, technical tone
+
+---
+
+**Status**: Day 1A Complete  
+**Next Update**: After Day 1 full completion (schemas + models + FastAPI app)
