@@ -109,7 +109,7 @@ ai-dev-toolkit/
 └── README.md                       # This file
 ```
 
-**Current Status**: Day 1A complete - Pydantic schemas with TDD
+**Current Status**: Day 1A complete - Enhanced Pydantic schemas with validation (8 tests passing)
 
 ## API Endpoints
 
@@ -162,7 +162,9 @@ npm run test
 ```
 
 **Current Test Coverage:**
-- [x] Pydantic schema validation (3/3 tests passing)
+- [x] Pydantic schema validation (8/8 tests passing)
+  - IssueInput: required fields, optional fields, defaults, missing fields
+  - TriageDecision: enum validation, confidence range validation
 - [ ] Database models (coming soon)
 - [ ] FastAPI endpoints (coming soon)
 - [ ] LLM integration (coming soon)

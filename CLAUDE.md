@@ -1,9 +1,9 @@
 # CLAUDE.md - AI Developer Toolkit
 
-**Last Updated**: 2025-11-14 (22:17 UTC)  
+**Last Updated**: 2025-11-15 (02:52 UTC)  
 **Project Start**: 2025-11-14  
 **Target Completion**: 2025-11-24 (10 days, flexible)  
-**Status**: Day 1A: Schemas Complete -> Next: Models + FastAPI App
+**Status**: Day 1A: Enhanced Schemas Complete (8 tests passing) -> Next: SQLAlchemy Models
 
 ---
 
@@ -437,22 +437,23 @@ class Triage(db.Model):
 
 ## 🔄 Daily Progress Log
 
-### Day 1A: Schemas + Testing Setup (2025-11-14 22:17 UTC) ✅ COMPLETE
+### Day 1A Session 1: Basic Schemas + Testing Setup (2025-11-14 22:17 UTC) ✅ COMPLETE
 
 **Completed:**
 - ✅ Setup uv venv in `services/api/`
-- ✅ Created `pyproject.toml` (minimal dependencies)
-- ✅ Installed pytest + pytest-asyncio
-- ✅ Created `schemas.py` with Pydantic models:
+- ✅ Created `pyproject.toml` with proper dependencies
+- ✅ Installed pytest + pytest-asyncio + ruff
+- ✅ Created basic `schemas.py` with Pydantic models:
   - `IssueInput` (request validation)
   - `TriageDecision` (LLM output structure)
 - ✅ Wrote 3 tests following TDD (RED → GREEN)
 - ✅ All tests passing
 
 **Dependencies Added:**
-- `pydantic` (validation)
-- `pytest` (testing)
-- `pytest-asyncio` (async test support)
+- `pydantic>=2.0.0` (validation)
+- `pytest>=7.4.0` (testing)
+- `pytest-asyncio>=0.21.0` (async test support)
+- `ruff>=0.1.0` (linting + formatting)
 
 **Key Learnings:**
 - TDD cycle: Write failing test first → See red → Implement minimal code → See green
@@ -462,13 +463,53 @@ class Triage(db.Model):
 - Python import gotcha: Created `schemas/schemas.py` by mistake, fixed to `schemas.py`
 
 **Key Decisions:**
-- Using `uv pip install` for speed (add to pyproject.toml later)
+- Using `pyproject.toml` for dependency management (modern Python standard)
 - Testing error messages by checking field name (resilient to Pydantic version changes)
 - Docstrings on tests for clarity
 
+---
+
+### Day 1A Session 2: Enhanced Schemas with Validation (2025-11-15 02:52 UTC) ✅ COMPLETE
+
+**Completed:**
+- ✅ Enhanced `IssueInput` schema:
+  - Renamed `description` → `body` (matches GitHub API)
+  - Added optional fields: `labels` (default `[]`), `author`, `created_at`
+  - Used modern Python syntax: `str | None` instead of `Optional[str]`
+- ✅ Enhanced `TriageDecision` schema:
+  - Added `Literal` types for `severity`, `category`, `priority` (enum validation)
+  - Added `confidence: float` field with `Field(ge=0.0, le=1.0)` range constraint
+- ✅ Expanded test coverage to 8 tests (all passing in 0.18s):
+  - 4 tests for `IssueInput` (required fields, optional defaults, missing title/body)
+  - 4 tests for `TriageDecision` (invalid severity/category/priority, invalid confidence)
+- ✅ Setup pytest-watcher with config file for hot reload
+- ✅ Configured WSL + Windows dual development environment
+- ✅ Fetched latest docs for Pydantic, FastAPI, pytest via Context7
+
+**Development Environment Improvements:**
+- Created `.pytest-watcher.yaml` for efficient test watching
+- Resolved WSL filesystem performance issues (moved to Windows for faster execution)
+- Configured Cursor with Python interpreter for proper IntelliSense
+- Established workflow: Windows for development, WSL for commands
+
+**Key Learnings:**
+- `Literal["val1", "val2"]` for enum-like validation (modern alternative to Enum)
+- `Field(ge=, le=)` for numeric range constraints
+- Modern union syntax `str | None` preferred over `Optional[str]` in Python 3.10+
+- pytest-watcher requires ignoring `.venv` directory to avoid noise
+- WSL filesystem (`/mnt/c/`) is slower than native Windows for file operations
+- `pyproject.toml` separates direct dependencies from transitive (cleaner than requirements.txt)
+
+**Key Decisions:**
+- Use `Literal` types instead of Enum classes (simpler, recommended by Pydantic v2)
+- Keep `body` field name to match GitHub API (not `description`)
+- Add `confidence` score for LLM output validation
+- Use pytest-watcher for development (hot reload tests)
+- Work from Windows filesystem for better performance
+
 **Blocked:** None
 
-**Next:** Database models (SQLAlchemy) with TDD
+**Next:** SQLAlchemy models with TDD (database layer)
 
 ---
 
