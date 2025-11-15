@@ -109,7 +109,7 @@ pytest -k "test_name" -v
 - [x] Expand test coverage to 8 tests (all passing)
 - [x] Setup pytest-watcher for hot reload
 - [x] Configure dev environment (WSL + Windows)
-- [ ] Commit enhanced schemas
+- [x] Commit and push enhanced schemas
 - [ ] Add SQLAlchemy models
 - [ ] Create basic FastAPI app
 
@@ -117,8 +117,7 @@ pytest -k "test_name" -v
 
 ## Next Steps
 
-1. **Immediate**: Commit enhanced schemas to git
-2. **Next**: SQLAlchemy models with TDD (Triage table)
+1. **Next Session**: SQLAlchemy models with TDD (Triage table)
 3. **Then**: Basic FastAPI app with health check endpoint
 4. **Tomorrow**: LLM service integration (async OpenAI)
 

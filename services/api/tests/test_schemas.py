@@ -42,7 +42,6 @@ def test_issue_input_rejects_missing_title():
     assert "title" in str(exc_info.value).lower()
 
 
-
 def test_issue_input_rejects_missing_body():
     """Issue input should reject a missing body"""
     with pytest.raises(ValidationError) as exc_info:
