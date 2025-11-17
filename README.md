@@ -83,13 +83,15 @@ ai-dev-toolkit/
 ├── services/                         # All application services
 │   ├── api/                         # FastAPI backend
 │   │   ├── .venv/                  # Virtual environment (uv)
-│   │   ├── main.py                 # FastAPI app
+│   │   ├── main.py                 # FastAPI app ✅
 │   │   ├── schemas.py              # Pydantic validation schemas ✅
-│   │   ├── models.py               # SQLAlchemy models (coming soon)
-│   │   ├── services/               # Business logic
-│   │   ├── routes/                 # API endpoints
+│   │   ├── models.py               # SQLAlchemy models ✅
+│   │   ├── services/               # Business logic (coming soon)
+│   │   ├── routes/                 # API endpoints (coming soon)
 │   │   ├── tests/                  # pytest tests ✅
-│   │   │   ├── test_schemas.py    # Schema validation tests
+│   │   │   ├── test_schemas.py    # Schema validation tests (8 tests)
+│   │   │   ├── test_models.py     # Model tests (5 tests)
+│   │   │   ├── test_api.py        # API endpoint tests (1 test)
 │   │   │   └── conftest.py        # pytest fixtures
 │   │   ├── pyproject.toml          # uv dependencies
 │   │   └── uv.lock                 # Lockfile
@@ -109,21 +111,22 @@ ai-dev-toolkit/
 └── README.md                       # This file
 ```
 
-**Current Status**: Day 1A complete - Pydantic schemas with TDD
+**Current Status**: Day 1A complete - Schemas + Models + FastAPI (14 tests passing)
 
 ## API Endpoints
 
 ```
-POST /api/triage
-├── Accepts: { title, description, repo_context? }
-└── Returns: { severity, category, labels, priority, reasoning }
+GET /health
+├── Status: ✅ Implemented
+└── Returns: { "status": "ok" }
 
-POST /github/webhook
+POST /api/triage (coming soon)
+├── Accepts: { title, body, labels?, author?, created_at? }
+└── Returns: { severity, category, labels, priority, reasoning, confidence }
+
+POST /github/webhook (coming soon)
 ├── GitHub issue webhook listener
 └── Auto-comments with triage results
-
-GET /health
-└── Health check endpoint
 ```
 
 ## Architecture
@@ -162,10 +165,15 @@ npm run test
 ```
 
 **Current Test Coverage:**
-- [x] Pydantic schema validation (3/3 tests passing)
-- [ ] Database models (coming soon)
-- [ ] FastAPI endpoints (coming soon)
+- [x] Pydantic schema validation (8 tests passing)
+  - IssueInput: required fields, optional fields, defaults, missing fields
+  - TriageDecision: enum validation, confidence range validation
+- [x] SQLAlchemy models (5 tests passing)
+  - Triage model: creation, constraints, field assignment, auto-generated IDs
+- [x] FastAPI endpoints (1 test passing)
+  - Health check endpoint
 - [ ] LLM integration (coming soon)
+- [ ] Triage service (coming soon)
 
 ## Development Philosophy
 
