@@ -1,9 +1,9 @@
 # CLAUDE.md - AI Developer Toolkit
 
-**Last Updated**: 2025-11-14 (22:17 UTC)  
+**Last Updated**: 2025-11-17 (22:18 UTC)  
 **Project Start**: 2025-11-14  
 **Target Completion**: 2025-11-24 (10 days, flexible)  
-**Status**: Day 1A: Schemas Complete -> Next: Models + FastAPI App
+**Status**: Day 1A: Complete (14 tests passing) - Schemas + Models + FastAPI
 
 ---
 
@@ -204,52 +204,168 @@ class Triage(db.Model):
 
 ### Days 1-2: Core API Foundation
 
-#### Day 1A: Schemas + Models + FastAPI Basics (🟡 IN PROGRESS)
+#### Day 1A: Schemas + Models + FastAPI Basics (✅ COMPLETE)
 
 **Goal**: Understand Pydantic validation, SQLAlchemy models, FastAPI basics
 
 **Tasks**:
-- [ ] Setup uv venv + pyproject.toml
-- [ ] Create Pydantic schemas (`schemas.py`)
+- [x] Setup uv venv + pyproject.toml
+- [x] Create Pydantic schemas (`schemas.py`)
   - IssueInput schema (request validation)
   - TriageDecision schema (LLM output)
-- [ ] Create SQLAlchemy models (`models.py`)
+- [x] Create SQLAlchemy models (`models.py`)
   - Triage table (sync database)
-- [ ] Basic FastAPI app (`main.py`)
+- [x] Basic FastAPI app (`main.py`)
   - Health check endpoint
-  - Database initialization
-- [ ] Write tests for schemas and models
+  - Uvicorn server configuration
+- [x] Write tests for schemas, models, and API
 
-**Learning Focus**: Type hints, Pydantic validation, SQLAlchemy ORM
+**Learning Focus**: Type hints, Pydantic validation, SQLAlchemy ORM, FastAPI basics
 
 **Acceptance Criteria**:
-- ✅ Pydantic schemas validate input correctly
-- ✅ Can create Triage record in database
-- ✅ Tests pass
-- ✅ FastAPI app runs: `uvicorn main:app --reload`
+- ✅ Pydantic schemas validate input correctly (8 tests)
+- ✅ Can create Triage record in database (5 tests)
+- ✅ FastAPI health endpoint works (1 test)
+- ✅ All 14 tests pass
+- ✅ FastAPI app runs: `python main.py`
 
 ---
 
-#### Day 1B: LLM Service + Triage Logic
+#### Day 1B: LLM Service + Triage Logic (🔵 NEXT)
 
 **Goal**: Integrate OpenAI, understand async patterns
 
-**Tasks**:
-- [ ] Create LLM service (`services/llm_service.py`)
-  - Async OpenAI integration
-  - Structured output with Pydantic
-  - System prompt for triage
-- [ ] Create triage service (`services/triage_service.py`)
-  - Business logic layer
-  - Call LLM, save to database
-- [ ] Write tests with mocked LLM responses
+**Estimated Time**: 1-2 hours
 
-**Learning Focus**: Async/await, LangChain/OpenAI SDK, mocking in tests
+---
+
+##### Task 1: LLM Service (Async OpenAI Integration)
+**File**: `services/llm_service.py`
+
+**What to Build**:
+- Async OpenAI client wrapper
+- Structured output using Pydantic `TriageDecision`
+- System prompt for triage classification
+- Error handling (API failures, rate limits)
+
+**Tests** (`tests/test_llm_service.py`):
+1. Successful triage classification (mocked LLM response)
+2. Handles invalid LLM output (schema validation)
+3. Handles OpenAI API errors (network failures)
+4. System prompt includes severity/category/priority guidelines
+
+**Key Concepts to Learn**:
+- `async`/`await` in Python (event loop vs threads)
+- OpenAI SDK (ChatCompletion API)
+- Structured outputs with Pydantic
+- Mocking async functions in pytest
+
+**TDD Flow**:
+1. Write test for successful classification (mocked response)
+2. Implement minimal `classify_issue()` function
+3. Write test for invalid LLM output
+4. Add validation error handling
+5. Write test for API errors
+6. Add error handling
+
+---
+
+##### Task 2: Triage Service (Business Logic Layer)
+**File**: `services/triage_service.py`
+
+**What to Build**:
+- `async def triage_issue(issue_input: IssueInput) -> TriageDecision`
+- Call LLM service
+- Save result to database (sync SQLAlchemy)
+- Return decision
+
+**Tests** (`tests/test_triage_service.py`):
+1. End-to-end: Input → LLM → Database → Output
+2. Prevents duplicate triages (unique `issue_url`)
+3. Handles LLM service failures gracefully
+
+**Key Concepts**:
+- Mixing async (LLM) with sync (database)
+- Service layer pattern (separation of concerns)
+- Integration testing strategy
+
+**TDD Flow**:
+1. Write test for full triage flow (mocked LLM)
+2. Implement `triage_issue()` function
+3. Write test for duplicate prevention
+4. Add uniqueness check
+5. Write test for LLM failure handling
+6. Add error handling
+
+---
+
+##### Dependencies to Add
+
+```toml
+[project]
+dependencies = [
+    "fastapi>=0.121.0",
+    "uvicorn>=0.38.0",
+    "sqlalchemy>=2.0.0",
+    "pydantic>=2.0.0",
+    "openai>=1.0.0",        # NEW
+    "python-dotenv>=1.0.0", # NEW
+]
+```
+
+---
+
+##### Environment Setup
+
+**Before starting:**
+
+```bash
+# Create .env file
+echo "OPENAI_API_KEY=your-key-here" > .env
+
+# Add to .gitignore
+echo ".env" >> .gitignore
+
+# Install dependencies
+uv sync
+```
+
+---
+
+##### File Structure After Day 1B
+
+```
+services/api/
+├── main.py
+├── schemas.py
+├── models.py
+├── services/
+│   ├── __init__.py
+│   ├── llm_service.py      # NEW
+│   └── triage_service.py   # NEW
+├── tests/
+│   ├── conftest.py
+│   ├── test_schemas.py     (8 tests)
+│   ├── test_models.py      (5 tests)
+│   ├── test_api.py         (1 test)
+│   ├── test_llm_service.py     # NEW (~4 tests)
+│   └── test_triage_service.py  # NEW (~3 tests)
+├── .env                    # NEW (gitignored)
+└── pyproject.toml
+```
+
+**Expected Test Count**: ~21 tests passing
+
+---
+
+**Learning Focus**: Async/await fundamentals, OpenAI SDK, mocking in tests
 
 **Acceptance Criteria**:
-- ✅ LLM service returns valid TriageDecision
-- ✅ Triage service saves to database
-- ✅ Tests pass with mocked LLM
+- [ ] LLM service returns valid TriageDecision
+- [ ] Triage service saves to database
+- [ ] All tests pass with mocked LLM responses
+- [ ] ~21 tests passing total
+- [ ] No real OpenAI API calls in tests (all mocked)
 
 ---
 
@@ -437,22 +553,23 @@ class Triage(db.Model):
 
 ## 🔄 Daily Progress Log
 
-### Day 1A: Schemas + Testing Setup (2025-11-14 22:17 UTC) ✅ COMPLETE
+### Day 1A Session 1: Basic Schemas + Testing Setup (2025-11-14 22:17 UTC) ✅ COMPLETE
 
 **Completed:**
 - ✅ Setup uv venv in `services/api/`
-- ✅ Created `pyproject.toml` (minimal dependencies)
-- ✅ Installed pytest + pytest-asyncio
-- ✅ Created `schemas.py` with Pydantic models:
+- ✅ Created `pyproject.toml` with proper dependencies
+- ✅ Installed pytest + pytest-asyncio + ruff
+- ✅ Created basic `schemas.py` with Pydantic models:
   - `IssueInput` (request validation)
   - `TriageDecision` (LLM output structure)
 - ✅ Wrote 3 tests following TDD (RED → GREEN)
 - ✅ All tests passing
 
 **Dependencies Added:**
-- `pydantic` (validation)
-- `pytest` (testing)
-- `pytest-asyncio` (async test support)
+- `pydantic>=2.0.0` (validation)
+- `pytest>=7.4.0` (testing)
+- `pytest-asyncio>=0.21.0` (async test support)
+- `ruff>=0.1.0` (linting + formatting)
 
 **Key Learnings:**
 - TDD cycle: Write failing test first → See red → Implement minimal code → See green
@@ -462,13 +579,104 @@ class Triage(db.Model):
 - Python import gotcha: Created `schemas/schemas.py` by mistake, fixed to `schemas.py`
 
 **Key Decisions:**
-- Using `uv pip install` for speed (add to pyproject.toml later)
+- Using `pyproject.toml` for dependency management (modern Python standard)
 - Testing error messages by checking field name (resilient to Pydantic version changes)
 - Docstrings on tests for clarity
 
+---
+
+### Day 1A Session 2: Enhanced Schemas with Validation (2025-11-15 02:52 UTC) ✅ COMPLETE
+
+**Completed:**
+- ✅ Enhanced `IssueInput` schema:
+  - Renamed `description` → `body` (matches GitHub API)
+  - Added optional fields: `labels` (default `[]`), `author`, `created_at`
+  - Used modern Python syntax: `str | None` instead of `Optional[str]`
+- ✅ Enhanced `TriageDecision` schema:
+  - Added `Literal` types for `severity`, `category`, `priority` (enum validation)
+  - Added `confidence: float` field with `Field(ge=0.0, le=1.0)` range constraint
+- ✅ Expanded test coverage to 8 tests (all passing in 0.18s):
+  - 4 tests for `IssueInput` (required fields, optional defaults, missing title/body)
+  - 4 tests for `TriageDecision` (invalid severity/category/priority, invalid confidence)
+- ✅ Setup pytest-watcher with config file for hot reload
+- ✅ Configured WSL + Windows dual development environment
+- ✅ Fetched latest docs for Pydantic, FastAPI, pytest via Context7
+
+**Development Environment Improvements:**
+- Created `.pytest-watcher.yaml` for efficient test watching
+- Resolved WSL filesystem performance issues (moved to Windows for faster execution)
+- Configured Cursor with Python interpreter for proper IntelliSense
+- Established workflow: Windows for development, WSL for commands
+
+**Key Learnings:**
+- `Literal["val1", "val2"]` for enum-like validation (modern alternative to Enum)
+- `Field(ge=, le=)` for numeric range constraints
+- Modern union syntax `str | None` preferred over `Optional[str]` in Python 3.10+
+- pytest-watcher requires ignoring `.venv` directory to avoid noise
+- WSL filesystem (`/mnt/c/`) is slower than native Windows for file operations
+- `pyproject.toml` separates direct dependencies from transitive (cleaner than requirements.txt)
+
+**Key Decisions:**
+- Use `Literal` types instead of Enum classes (simpler, recommended by Pydantic v2)
+- Keep `body` field name to match GitHub API (not `description`)
+- Add `confidence` score for LLM output validation
+- Use pytest-watcher for development (hot reload tests)
+- Work from Windows filesystem for better performance
+
 **Blocked:** None
 
-**Next:** Database models (SQLAlchemy) with TDD
+**Next:** SQLAlchemy models with TDD (database layer)
+
+---
+
+### Day 1A Session 3: SQLAlchemy Models with TDD (2025-11-16 23:33 UTC) ✅ COMPLETE
+
+(Content remains the same)
+
+---
+
+### Day 1A Session 4: FastAPI Basics with Health Endpoint (2025-11-17 22:18 UTC) ✅ COMPLETE
+
+**Completed:**
+- ✅ Created `models.py` with `Triage` model:
+  - All required fields (issue_url, title, body, severity, category, priority, labels, reasoning, confidence)
+  - Auto-generated fields (id, created_at)
+  - Unique constraint on `issue_url`
+  - Proper nullable constraints
+- ✅ Created `conftest.py` with `db_session` fixture:
+  - SQLite in-memory database for tests
+  - Automatic table creation/cleanup
+  - Follows pytest fixture pattern
+- ✅ Added 5 comprehensive model tests (all passing):
+  - Model creation with all fields
+  - Unique constraint enforcement (issue_url)
+  - Field assignment validation
+  - Auto-generated ID uniqueness
+  - ID conflict detection
+- ✅ Fetched SQLAlchemy 2.0 docs via Context7 for best practices
+
+**Dependencies Added:**
+- `sqlalchemy>=2.0.0` (ORM)
+
+**Key Learnings:**
+- SQLAlchemy 2.0 uses `declarative_base()` from `sqlalchemy.orm` (not `sqlalchemy.ext.declarative`)
+- `__tablename__` is required for every model
+- Lambda functions for `default=` ensure values are computed per-record (not once at class definition)
+- SQLite in-memory (`sqlite:///:memory:`) is fast for unit tests, but doesn't enforce all constraints
+- `IntegrityError` is raised for unique constraint violations
+- Fixtures use `yield` for setup/teardown pattern
+- xUnit setup/teardown pattern = pytest fixtures (more flexible)
+
+**Key Decisions:**
+- Use SQLite for unit tests (fast, no setup), reserve PostgreSQL for integration tests
+- Use `lambda: datetime.now(timezone.utc)` for created_at default (timezone-aware)
+- Test field assignment rather than NULL constraint enforcement (SQLite limitation)
+- Use `IntegrityError` (not generic `Exception`) for constraint tests
+- Suppress `SAWarning` about identity conflicts in tests (expected behavior)
+
+**Blocked:** None
+
+**Next:** FastAPI basics (health check endpoint)
 
 ---
 
