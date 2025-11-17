@@ -1,7 +1,7 @@
 # WARP.md - AI Developer Toolkit
 
-**Last Updated**: 2025-11-15 (02:54 UTC)  
-**Current Status**: Day 1A - Enhanced Schemas Complete (8 tests passing) -> Next: SQLAlchemy Models  
+**Last Updated**: 2025-11-17 (22:18 UTC)  
+**Current Status**: Day 1A - Complete (14 tests passing) - Schemas + Models + FastAPI  
 **Branch**: `feature/schemas-setup`
 
 ---
@@ -16,32 +16,93 @@
 
 ## Just Completed
 
-**Enhanced Pydantic Schemas with Validation** ✅
+**Day 1A: Schemas + Models + FastAPI Basics** ✅
 
 **What Changed**:
-1. `IssueInput` schema:
-   - ✅ Renamed `description` → `body` (matches GitHub API)
-   - ✅ Added optional fields: `labels`, `author`, `created_at`
-   - ✅ Used modern syntax: `str | None` instead of `Optional[str]`
-2. `TriageDecision` schema:
-   - ✅ Added `Literal` types for severity, category, priority (enum validation)
-   - ✅ Added `confidence: float` with `Field(ge=0.0, le=1.0)`
-3. Tests:
-   - ✅ Expanded from 3 to 8 tests (all passing in 0.18s)
-   - ✅ Added pytest-watcher for hot reload
+1. Created `main.py`:
+   - ✅ FastAPI app initialization
+   - ✅ `GET /health` endpoint returning JSON
+   - ✅ Uvicorn server setup (port 8081)
+2. Created `tests/test_api.py`:
+   - ✅ TestClient fixture
+   - ✅ Health endpoint test
+3. Added dependencies:
+   - ✅ `httpx>=0.25.0` for TestClient support
+4. Tests:
+   - ✅ 14 total tests passing (8 schemas + 5 models + 1 API)
 
-**Files Modified**:
-- `schemas.py` - Enhanced with Literal types and Field constraints
-- `tests/test_schemas.py` - 8 comprehensive tests
-- `.pytest-watcher.yaml` - Watch config (ignores .venv)
+**Files Created**:
+- `main.py` - FastAPI app with health endpoint
+- `tests/test_api.py` - API endpoint tests
 
-## Next Session
+## Next Session: Day 1B Game Plan
 
-**Working On**: SQLAlchemy models with TDD (database layer)
+**Goal**: Integrate OpenAI with async patterns, create business logic layer
 
-**Files to Create**:
-- `services/api/models.py` - Triage database model
-- `services/api/tests/test_models.py` - Model tests
+**Estimated Time**: 1-2 hours
+
+### Task 1: LLM Service (Async OpenAI Integration)
+**File**: `services/llm_service.py`
+
+**What to Build**:
+- Async OpenAI client wrapper
+- Structured output using Pydantic `TriageDecision`
+- System prompt for triage classification
+- Error handling (API failures, rate limits)
+
+**Tests** (`tests/test_llm_service.py`):
+1. Successful triage classification (mocked LLM response)
+2. Handles invalid LLM output (schema validation)
+3. Handles OpenAI API errors (network failures)
+4. System prompt includes severity/category/priority guidelines
+
+**Key Concepts**: `async`/`await`, OpenAI SDK, structured outputs, mocking async functions
+
+---
+
+### Task 2: Triage Service (Business Logic Layer)
+**File**: `services/triage_service.py`
+
+**What to Build**:
+- `async def triage_issue(issue_input: IssueInput) -> TriageDecision`
+- Call LLM service
+- Save result to database (sync SQLAlchemy)
+- Return decision
+
+**Tests** (`tests/test_triage_service.py`):
+1. End-to-end: Input → LLM → Database → Output
+2. Prevents duplicate triages (unique `issue_url`)
+3. Handles LLM service failures gracefully
+
+**Key Concepts**: Mixing async (LLM) with sync (database), service layer pattern
+
+---
+
+### Dependencies to Add
+```toml
+[project]
+dependencies = [
+    # ... existing
+    "openai>=1.0.0",        # OpenAI SDK
+    "python-dotenv>=1.0.0", # Environment variables
+]
+```
+
+### Environment Setup
+```bash
+# Create .env file
+echo "OPENAI_API_KEY=your-key-here" > .env
+
+# Add to .gitignore
+echo ".env" >> .gitignore
+```
+
+### Acceptance Criteria
+- [ ] LLM service returns valid `TriageDecision`
+- [ ] Triage service saves to database
+- [ ] All tests pass with mocked LLM responses
+- [ ] ~20 tests passing total
+- [ ] No real OpenAI API calls in tests (all mocked)
 
 ---
 
@@ -110,16 +171,21 @@ pytest -k "test_name" -v
 - [x] Setup pytest-watcher for hot reload
 - [x] Configure dev environment (WSL + Windows)
 - [x] Commit and push enhanced schemas
-- [ ] Add SQLAlchemy models
-- [ ] Create basic FastAPI app
+- [x] Add SQLAlchemy models (Triage with 5 tests)
+- [x] Create conftest.py with db_session fixture
+- [x] Commit and push models
+- [x] Add FastAPI basics (health check)
+- [x] Add httpx dev dependency for TestClient
+- [x] Write API endpoint tests (1 test passing)
+- [x] Complete Day 1A (14 tests total)
 
 ---
 
 ## Next Steps
 
-1. **Next Session**: SQLAlchemy models with TDD (Triage table)
-3. **Then**: Basic FastAPI app with health check endpoint
-4. **Tomorrow**: LLM service integration (async OpenAI)
+1. **Next Session**: Day 1B - LLM service integration (async OpenAI)
+2. **Then**: Triage service (business logic layer)
+3. **After That**: POST /api/triage endpoint
 
 ---
 
