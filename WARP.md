@@ -123,7 +123,114 @@ echo ".env" >> .gitignore
 3. **Learning Style**: Explain thoroughly first time, trust understanding after
 4. **Code Style**: Type hints everywhere, docstrings on complex functions only
 5. **No Emojis**: Professional docs (looks less AI-generated)
-6. **Git Workflow**: Feature branches with PRs (main ← develop ← feature/*)
+6. **Git Workflow**: Clean linear history with atomic commits
+
+---
+
+## Git Strategy (Portfolio-Ready History)
+
+**Branch Structure**:
+```
+master (production, default) ← develop ← feature/*
+```
+
+### Atomic Commits
+- One logical change per commit
+- Self-contained (doesn't break build)
+- Clear purpose in message
+
+### Commit Message Format
+```
+Add <feature> with <approach>
+
+- Implementation detail
+- Technical decision
+- Test coverage
+
+Tech: <stack>
+Tests: X/X passing
+```
+
+### Clean History with Rebase
+```bash
+# Before pushing, squash messy commits
+git rebase -i HEAD~3
+
+# In editor:
+pick abc1234 Add feature
+squash def5678 Fix typo  # Combine into above
+squash ghi9012 Fix test  # Combine into above
+```
+
+**Golden Rule**: Never rebase public/shared commits
+
+### Maximizing GitHub Contributions
+- Commit after each test pass or feature
+- Push at end of each session
+- Aim for consistent daily activity
+- Green squares = engagement to employers
+
+---
+
+## Git Strategy for Portfolio Projects
+
+**Philosophy**: Clean, linear history demonstrates professional Git skills to employers.
+
+### Branch Structure
+```
+master (production, default branch)
+  ↑
+develop (integration branch)
+  ↑
+feature/* (work branches)
+```
+
+### Commit Best Practices
+
+**1. Atomic Commits**
+- One logical change per commit
+- Each commit should be self-contained and not break the build
+- Example: "Add Pydantic schemas" not "Update files"
+
+**2. Commit Message Format**
+```
+<action> <feature> <details>
+
+- Bullet point of what was added/changed
+- Bullet point of technical approach
+- Bullet point of testing
+
+Tech: <technologies used>
+Tests: <test count and status>
+```
+
+**3. Clean History with Interactive Rebase**
+```bash
+# Before pushing, squash messy commits
+git rebase -i HEAD~3
+
+# In editor:
+pick abc1234 Add feature
+squash def5678 Fix typo
+squash ghi9012 Fix test
+```
+
+**4. Never Rebase Public Commits**
+- ✅ Rebase local commits before pushing
+- ❌ Never rebase commits others have based work on
+- Use `git push --force` only on personal branches
+
+### Maximizing GitHub Contributions
+
+**Commit Frequency**:
+- Commit after each passing test or complete feature
+- Push at end of each session (shows consistent activity)
+- Aim for daily commits during active development
+
+**Contribution Graph**:
+- Green squares = engagement and consistency
+- Employers notice consistent contribution patterns
+- Quality over quantity, but consistency matters
 
 ---
 

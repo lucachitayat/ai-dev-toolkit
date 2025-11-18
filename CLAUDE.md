@@ -964,13 +964,75 @@ curl -X POST http://localhost:8081/api/triage -d '{"title":"test","description":
 
 ---
 
-**7. Git Workflow**
-- DECISION: Feature branch workflow with PRs
-- Branches: `main` (production), `develop` (integration), `feature/*` (work)
-- Commit frequently after each passing test or complete feature
-- Use meaningful commit messages (no "fix bug" or "update files")
-- CLAUDE.md stays in `develop` and feature branches only (not `main`)
-- README.md in all branches
+**7. Git Workflow and Clean History**
+- DECISION: Clean linear history for portfolio presentation
+- Branches: `master` (production, default), `develop` (integration), `feature/*` (work)
+- Use interactive rebase to maintain clean history before merging
+- Atomic commits: one logical change per commit
+- Professional commit messages with clear format
+- Never rebase public/shared commits (only local work)
+
+**Git Strategy Details** (for portfolio projects):
+
+1. **Atomic Commits**: Each commit represents one complete, logical change
+   - Self-contained (doesn't break the build)
+   - Single purpose (not mixing unrelated changes)
+   - Clear message explaining what and why
+
+2. **Commit Message Format**:
+   ```
+   <Action> <feature> <with details>
+   
+   - Bullet point of implementation
+   - Bullet point of technical decisions
+   - Bullet point of test coverage
+   
+   Tech: <technologies>
+   Tests: X/X passing
+   ```
+
+3. **Interactive Rebase Workflow**:
+   ```bash
+   # Squash messy commits before pushing
+   git rebase -i HEAD~N
+   
+   # Commands:
+   pick   = keep commit as-is
+   squash = combine with previous commit
+   reword = edit commit message
+   drop   = remove commit
+   ```
+
+4. **When to Rebase**:
+   - ✅ Before pushing to clean up local commits
+   - ✅ Before creating PR to present clean history
+   - ✅ To catch up with main branch changes
+   - ❌ Never on shared/public commits (breaks others' work)
+
+5. **Maximizing GitHub Contributions**:
+   - Commit frequency: After each test pass or feature completion
+   - Push at end of each session (shows activity)
+   - Consistent daily commits during active development
+   - Quality commits > quantity, but consistency matters for employer visibility
+
+**Example Clean History** (this project):
+```
+* Fix .gitignore line endings
+* Update documentation for Day 1A completion
+* Add FastAPI application with health check endpoint
+* Add SQLAlchemy models with database layer
+* Add Pydantic schemas with comprehensive validation
+* Initial project setup
+```
+
+Vs. **Messy History** (before cleanup):
+```
+* Merge PR #3
+* Updated files
+* Fix typo
+* Added stuff
+* Merge develop
+```
 
 **Commit Message Format:**
 ```bash
